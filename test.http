@@ -1,0 +1,406 @@
+### Quarkus Order Service API Testing
+### Host: http://localhost:8080
+
+### 1. Create a new order (Test with new customer)
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "Test Customer API",
+  "orderDate": "2024-03-15",
+  "items": [
+    {
+      "productName": "Laptop ASUS ROG",
+      "quantity": 1,
+      "price": 15000000.00
+    },
+    {
+      "productName": "Mouse Gaming Logitech",
+      "quantity": 2,
+      "price": 850000.00
+    },
+    {
+      "productName": "Mechanical Keyboard",
+      "quantity": 1,
+      "price": 1200000.00
+    }
+  ]
+}
+
+### 2. Create another order with different customer
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "Jane Smith",
+  "orderDate": "2024-01-21",
+  "items": [
+    {
+      "productName": "Monitor Samsung 27inch",
+      "quantity": 2,
+      "price": 3500000.00
+    },
+    {
+      "productName": "HDMI Cable",
+      "quantity": 3,
+      "price": 150000.00
+    }
+  ]
+}
+
+### 3. Create order with single item
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "hos",
+  "orderDate": "2024-01-22",
+  "items": [
+    {
+      "productName": "WD samsung",
+      "quantity": 2,
+      "price": 11000000.00
+    }
+  ]
+}
+
+### 4. Test validation - empty customer name
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": " hp",
+  "orderDate": "2024-01-23",
+  "items": [
+    {
+      "productName": "Dell xps 13",
+      "quantity": 2,
+      "price": 90000.00
+    }
+  ]
+}
+
+### 5. Test validation - empty items
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "Alice Brown",
+  "orderDate": "2024-01-23",
+  "items": []
+}
+
+### 6. Get all orders (first page)
+GET http://localhost:8080/orders
+
+### 7. Get orders with pagination (page 1, size 5)
+GET http://localhost:8080/orders?page=1&size=10
+
+### 8. Get orders with sorting (by total amount, ascending)
+GET http://localhost:8080/orders?page=1&size=10&sort=totalAmount&order=asc
+
+### 9. Get orders with sorting (by customer name, descending)
+GET http://localhost:8080/orders?page=0&size=10&sort=customerName&order=desc
+
+### 10. Get orders by specific customer name (filter)
+GET http://localhost:8080/orders?customerName=John%20Doe
+
+### 11. Get order by ID (replace ID with actual order ID)
+# Note: Replace {orderId} with actual ID from create response
+GET http://localhost:8080/orders/{{orderId}}
+
+### 12. Get orders by specific customer with path parameter
+GET http://localhost:8080/orders/customers/John%20Doe
+
+### 13. Get customer spending analytics
+GET http://localhost:8080/orders/customers/spending
+
+### 13. Get customer spending analytics
+GET http://localhost:8080/orders/customers/spending?page=1&size=5
+
+### 14. Test non-existent order ID
+GET http://localhost:8080/orders/1
+
+### 15. Delete an order (replace ID with actual order ID)
+# Note: Replace {orderId} with actual ID from create response
+DELETE http://localhost:8080/orders/1
+
+### ===== REACTIVE API TESTING =====
+### Host: http://localhost:8080/reactive
+
+### 17. Create order using reactive API
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "Charlie Wilson",
+  "orderDate": "2024-01-24",
+  "items": [
+    {
+      "productName": "iPhone 15 Pro",
+      "quantity": 2,
+      "price": 22000000.00
+    },
+    {
+      "productName": "AirPods Pro",
+      "quantity": 1,
+      "price": 4000000.00
+    }
+  ]
+}
+
+### 18. Get all orders using reactive API
+GET http://localhost:8080/reactive/orders
+
+### 19. Get order by ID using reactive API
+# Note: Replace {orderId} with actual order ID
+GET http://localhost:8080/reactive/orders/{{orderId}}
+
+### 20. Get customer spending using reactive API
+GET http://localhost:8080/reactive/orders/customers/spending
+
+### 21. Stream orders (reactive)
+GET http://localhost:8080/reactive/orders/stream
+
+### ===== BULK DATA CREATION FOR TESTING =====
+
+### 22. Create multiple orders for testing (use these one by one)
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "David Martinez",
+  "orderDate": "2024-01-15",
+  "items": [
+    {
+      "productName": "MacBook Pro 16",
+      "quantity": 1,
+      "price": 35000000.00
+    }
+  ]
+}
+
+###
+
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "Sarah Chen",
+  "orderDate": "2024-01-16",
+  "items": [
+    {
+      "productName": "Dell XPS 13",
+      "quantity": 2,
+      "price": 18000000.00
+    },
+    {
+      "productName": "USB-C Hub",
+      "quantity": 2,
+      "price": 750000.00
+    }
+  ]
+}
+
+###
+
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "Michael Johnson",
+  "orderDate": "2024-01-17",
+  "items": [
+    {
+      "productName": "Sony PlayStation 5",
+      "quantity": 1,
+      "price": 8000000.00
+    },
+    {
+      "productName": "DualSense Controller",
+      "quantity": 2,
+      "price": 1500000.00
+    }
+  ]
+}
+
+###
+
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "Emily Rodriguez",
+  "orderDate": "2024-01-18",
+  "items": [
+    {
+      "productName": "Nintendo Switch OLED",
+      "quantity": 1,
+      "price": 4500000.00
+    }
+  ]
+}
+
+###
+
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "John Doe",
+  "orderDate": "2024-01-19",
+  "items": [
+    {
+      "productName": "Samsung SSD 1TB",
+      "quantity": 3,
+      "price": 1200000.00
+    }
+  ]
+}
+
+### ===== SEARCH AND FILTER TESTING =====
+
+### 23. Search orders by customer name (case sensitive test)
+GET http://localhost:8080/orders?customerName=john%20doe
+
+### 24. Search orders by customer name (exact match)
+GET http://localhost:8080/orders?customerName=John%20Doe
+
+### 25. Get large page size
+GET http://localhost:8080/orders?page=0&size=50
+
+### 26. Get orders with custom sorting
+GET http://localhost:8080/orders?page=0&size=20&sort=orderDate&order=desc
+
+### 27. Get orders sorted by creation date
+GET http://localhost:8080/orders?page=0&size=10&sort=createdAt&order=asc
+
+### ===== STRESS TESTING EXAMPLES =====
+
+### 28. Create order with many items
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "Bulk Order Customer",
+  "orderDate": "2024-01-25",
+  "items": [
+    {
+      "productName": "Office Chair Premium",
+      "quantity": 10,
+      "price": 2500000.00
+    },
+    {
+      "productName": "Standing Desk",
+      "quantity": 5,
+      "price": 4500000.00
+    },
+    {
+      "productName": "Monitor Stand",
+      "quantity": 15,
+      "price": 500000.00
+    },
+    {
+      "productName": "Desk Lamp LED",
+      "quantity": 20,
+      "price": 350000.00
+    },
+    {
+      "productName": "Whiteboard Large",
+      "quantity": 3,
+      "price": 1200000.00
+    }
+  ]
+}
+
+### ===== ERROR HANDLING TESTING =====
+
+### 29. Test invalid JSON
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "Test Customer",
+  "orderDate": "2024-01-26",
+  "items": [
+    {
+      "productName": "Test Product",
+      "quantity": "invalid_number",
+      "price": 1000000.00
+    }
+  ]
+}
+
+### 30. Test missing required fields
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "productName": "Test Product",
+      "quantity": 1,
+      "price": 1000000.00
+    }
+  ]
+}
+
+### ===== FINAL VALIDATION =====
+
+### 31. After creating orders, test customer spending
+GET http://localhost:8080/orders/customers/spending
+
+### 32. Get all orders to see pagination info
+GET http://localhost:8080/orders?page=0&size=5
+
+### ===== TESTING WITH EXISTING SAMPLE DATA =====
+### Note: These queries use data from Flyway migrations
+
+### 33. Get orders for existing customer "Budi Santoso"
+GET http://localhost:8080/orders/customers/Budi%20Santoso
+
+### 34. Get orders for existing customer "Siti Nurhaliza"
+GET http://localhost:8080/orders/customers/Siti%20Nurhaliza
+
+### 35. Get orders for existing customer "Analytics Test User"
+GET http://localhost:8080/orders/customers/Analytics%20Test%20User
+
+### 36. Test pagination with larger page size
+GET http://localhost:8080/orders?page=0&size=25
+
+### 37. Test date range filtering (if implemented)
+GET http://localhost:8080/orders?page=0&size=10&sort=orderDate&order=desc
+
+### 38. Get orders by total amount (highest first)
+GET http://localhost:8080/orders?page=0&size=5&sort=totalAmount&order=desc
+
+### 39. Get orders by total amount (lowest first)
+GET http://localhost:8080/orders?page=0&size=5&sort=totalAmount&order=asc
+
+### 40. Test search for corporate customers
+GET http://localhost:8080/orders?customerName=PT
+
+### 41. Test search for customer with special characters
+GET http://localhost:8080/orders?customerName=Jos%C3%A9%20Garc%C3%ADa
+
+### 42. Get customer spending analytics (should show top customers)
+GET http://localhost:8080/orders/customers/spending
+
+### ===== PERFORMANCE TESTING =====
+
+### 43. Get large page size to test performance
+GET http://localhost:8080/orders?page=0&size=100
+
+### 44. Test sorting on large dataset
+GET http://localhost:8080/orders?page=0&size=50&sort=totalAmount&order=desc
+
+### ===== EDGE CASE TESTING =====
+
+### 45. Test with very high page number (should return empty)
+GET http://localhost:8080/orders?page=999&size=10
+
+### 46. Test with negative page number (should default to 0)
+GET http://localhost:8080/orders?page=-1&size=10
+
+### 47. Test with very large page size (should be limited)
+GET http://localhost:8080/orders?page=0&size=1000

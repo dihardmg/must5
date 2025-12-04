@@ -1,0 +1,3 @@
+-- This file allow to write SQL commands that will be emitted in test and dev.
+-- Flyway will handle schema creation, so no manual INSERT statements needed here.
+-- Sample data can be added later through API calls or separate migration scripts.
