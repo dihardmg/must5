@@ -94,7 +94,7 @@ Content-Type: application/json
 GET http://localhost:8080/orders
 
 ### 7. Get orders with pagination (page 1, size 5)
-GET http://localhost:8080/orders?page=1&size=10
+GET http://localhost:8080/orders?page=1&size=2
 
 ### 8. Get orders with sorting (by total amount, ascending)
 GET http://localhost:8080/orders?page=1&size=10&sort=totalAmount&order=asc
@@ -116,7 +116,7 @@ GET http://localhost:8080/orders/customers/John%20Doe
 GET http://localhost:8080/orders/customers/spending
 
 ### 13. Get customer spending analytics
-GET http://localhost:8080/orders/customers/spending?page=1&size=5
+GET http://localhost:8080/orders/customers/spending?page=1&size=2
 
 ### 14. Test non-existent order ID
 GET http://localhost:8080/orders/1
@@ -126,14 +126,16 @@ GET http://localhost:8080/orders/1
 DELETE http://localhost:8080/orders/1
 
 ### ===== REACTIVE API TESTING =====
-### Host: http://localhost:8080/reactive
+### Host: http://localhost:8080
+
+### ===== REACTIVE CRUD OPERATIONS =====
 
 ### 17. Create order using reactive API
 POST http://localhost:8080/reactive/orders
 Content-Type: application/json
 
 {
-  "customerName": "Charlie Wilson",
+  "customerName": "Reactive Customer 1",
   "orderDate": "2024-01-24",
   "items": [
     {
@@ -149,18 +151,360 @@ Content-Type: application/json
   ]
 }
 
-### 18. Get all orders using reactive API
+### 18. Create another reactive order with different customer
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "Reactive Customer 2",
+  "orderDate": "2024-01-25",
+  "items": [
+    {
+      "productName": "MacBook Pro M3",
+      "quantity": 1,
+      "price": 35000000.00
+    },
+    {
+      "productName": "Magic Mouse",
+      "quantity": 1,
+      "price": 1500000.00
+    }
+  ]
+}
+
+### 19. Create reactive order with single item
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "Reactive Customer 4",
+  "orderDate": "2024-01-26",
+  "items": [
+    {
+      "productName": "iPad Pro 13.9",
+      "quantity": 1,
+      "price": 19000000.00
+    }
+  ]
+}
+
+### ===== REACTIVE READ OPERATIONS =====
+
+### 20. Get all orders using reactive API (first page)
 GET http://localhost:8080/reactive/orders
 
-### 19. Get order by ID using reactive API
-# Note: Replace {orderId} with actual order ID
-GET http://localhost:8080/reactive/orders/{{orderId}}
+### 21. Get reactive orders with pagination
+GET http://localhost:8080/reactive/orders?page=1&size=5
 
-### 20. Get customer spending using reactive API
+### 22. Get reactive orders with sorting (by total amount, descending)
+GET http://localhost:8080/reactive/orders?page=0&size=10&sort=totalAmount&order=desc
+
+### 23. Get reactive orders with sorting (by customer name, ascending)
+GET http://localhost:8080/reactive/orders?page=0&size=10&sort=customerName&order=asc
+
+### 24. Get reactive orders filtered by customer name
+GET http://localhost:8080/reactive/orders?customerName=Reactive%20Customer%201
+
+### 25. Get reactive order by ID (replace ID with actual order ID from reactive creation)
+# Note: Replace {reactiveOrderId} with actual ID from reactive create response
+GET http://localhost:8080/reactive/orders/2
+
+### ===== REACTIVE CUSTOMER ANALYTICS =====
+
+### 26. Get customer spending analytics using reactive API
 GET http://localhost:8080/reactive/orders/customers/spending
 
-### 21. Stream orders (reactive)
-GET http://localhost:8080/reactive/orders/stream
+### 27. Get customer spending analytics with pagination (reactive)
+GET http://localhost:8080/reactive/orders/customers/spending?page=1&size=3
+
+### 28. Get orders for specific customer using reactive API
+GET http://localhost:8080/reactive/orders/customers/Reactive%20Customer%201
+
+### 29. Get orders for specific customer with pagination (reactive)
+GET http://localhost:8080/reactive/orders/customers/Reactive%20Customer%202?page=0&size=5
+
+### ===== REACTIVE VALIDATION TESTING =====
+
+### 30. Test validation - empty customer name (reactive)
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "reactive",
+  "orderDate": "2024-01-27",
+  "items": [
+    {
+      "productName": "Test Product reactive",
+      "quantity": 2,
+      "price": 1000000.00
+    }
+  ]
+}
+
+### 31. Test validation - empty items (reactive)
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "Reactive Validation Test",
+  "orderDate": "2024-01-27",
+  "items": []
+}
+
+### 32. Test validation - negative quantity (reactive)
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "Reactive Validation Test 2",
+  "orderDate": "2024-01-27",
+  "items": [
+    {
+      "productName": "Test Product",
+      "quantity": -1,
+      "price": 1000000.00
+    }
+  ]
+}
+
+### 33. Test validation - zero price (reactive)
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "Reactive Validation Test 3",
+  "orderDate": "2024-01-27",
+  "items": [
+    {
+      "productName": "Test Product",
+      "quantity": 1,
+      "price": 0
+    }
+  ]
+}
+
+### 34. Test validation - empty product name (reactive)
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "Reactive Validation Test 4",
+  "orderDate": "2024-01-27",
+  "items": [
+    {
+      "productName": "",
+      "quantity": 1,
+      "price": 1000000.00
+    }
+  ]
+}
+
+### ===== REACTIVE ERROR HANDLING =====
+
+### 35. Test non-existent order ID (reactive)
+GET http://localhost:8080/reactive/orders/1
+
+### 36. Test invalid order ID format (reactive)
+GET http://localhost:8080/reactive/orders/invalid-id
+
+### 37. Test customer not found (reactive)
+GET http://localhost:8080/reactive/orders/customers/NonExistentCustomer
+
+### ===== REACTIVE DELETE OPERATIONS =====
+
+### 38. Delete reactive order (replace ID with actual reactive order ID)
+# Note: Replace {reactiveOrderIdToDelete} with actual ID from reactive create response
+DELETE http://localhost:8080/reactive/orders/{{reactiveOrderIdToDelete}}
+
+### 39. Test deleting non-existent order (reactive)
+DELETE http://localhost:8080/reactive/orders/1
+
+### ===== REACTIVE PERFORMANCE TESTING =====
+
+### 40. Create bulk reactive orders for performance testing
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "Bulk Reactive Customer",
+  "orderDate": "2024-01-28",
+  "items": [
+    {
+      "productName": "Gaming Laptop",
+      "quantity": 1,
+      "price": 25000000.00
+    },
+    {
+      "productName": "Gaming Mouse",
+      "quantity": 2,
+      "price": 800000.00
+    },
+    {
+      "productName": "Mechanical Keyboard RGB",
+      "quantity": 1,
+      "price": 2000000.00
+    },
+    {
+      "productName": "Gaming Headset",
+      "quantity": 1,
+      "price": 1500000.00
+    },
+    {
+      "productName": "Monitor 27inch 144Hz",
+      "quantity": 2,
+      "price": 5000000.00
+    }
+  ]
+}
+
+### 41. Test reactive pagination with large page size
+GET http://localhost:8080/reactive/orders?page=0&size=50
+
+### 42. Test reactive sorting on large dataset
+GET http://localhost:8080/reactive/orders?page=0&size=25&sort=totalAmount&order=desc
+
+### 43. Test reactive customer spending with large page
+GET http://localhost:8080/reactive/orders/customers/spending?page=0&size=20
+
+### ===== REACTIVE EDGE CASES =====
+
+### 44. Test reactive pagination with very high page number
+GET http://localhost:8080/reactive/orders?page=999&size=10
+
+### 45. Test reactive pagination with negative page number
+GET http://localhost:8080/reactive/orders?page=-1&size=10
+
+### 46. Test reactive pagination with very large page size
+GET http://localhost:8080/reactive/orders?page=0&size=1000
+
+### 47. Test reactive search with special characters
+GET http://localhost:8080/reactive/orders?customerName=Reactive%20Customer%20%26%20Test
+
+### 48. Test reactive orders sorted by creation date
+GET http://localhost:8080/reactive/orders?page=0&size=10&sort=createdAt&order=desc
+
+### 49. Test reactive orders sorted by order date
+GET http://localhost:8080/reactive/orders?page=0&size=10&sort=orderDate&order=asc
+
+### ===== REACTIVE COMPATIBILITY TESTING =====
+
+### 50. Compare blocking vs reactive - create same order in both systems
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerName": "Comparison Test Customer",
+  "orderDate": "2024-01-29",
+  "items": [
+    {
+      "productName": "Test Product",
+      "quantity": 1,
+      "price": 1000000.00
+    }
+  ]
+}
+
+### 51. Compare blocking vs reactive - create same order in reactive system
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "Comparison Test Customer",
+  "orderDate": "2024-01-29",
+  "items": [
+    {
+      "productName": "Test Product",
+      "quantity": 1,
+      "price": 1000000.00
+    }
+  ]
+}
+
+### 52. Compare results - get all orders from blocking API
+GET http://localhost:8080/orders
+
+### 53. Compare results - get all orders from reactive API
+GET http://localhost:8080/reactive/orders
+
+### 54. Compare analytics - customer spending from blocking API
+GET http://localhost:8080/orders/customers/spending
+
+### 55. Compare analytics - customer spending from reactive API
+GET http://localhost:8080/reactive/orders/customers/spending
+
+### ===== REACTIVE STRESS TESTING =====
+
+### 56. Create complex reactive order with many items
+POST http://localhost:8080/reactive/orders
+Content-Type: application/json
+
+{
+  "customerName": "Stress Test Customer",
+  "orderDate": "2024-01-30",
+  "items": [
+    {
+      "productName": "Item 1",
+      "quantity": 1,
+      "price": 100000.00
+    },
+    {
+      "productName": "Item 2",
+      "quantity": 2,
+      "price": 200000.00
+    },
+    {
+      "productName": "Item 3",
+      "quantity": 3,
+      "price": 300000.00
+    },
+    {
+      "productName": "Item 4",
+      "quantity": 4,
+      "price": 400000.00
+    },
+    {
+      "productName": "Item 5",
+      "quantity": 5,
+      "price": 500000.00
+    },
+    {
+      "productName": "Item 6",
+      "quantity": 6,
+      "price": 600000.00
+    },
+    {
+      "productName": "Item 7",
+      "quantity": 7,
+      "price": 700000.00
+    },
+    {
+      "productName": "Item 8",
+      "quantity": 8,
+      "price": 800000.00
+    },
+    {
+      "productName": "Item 9",
+      "quantity": 9,
+      "price": 900000.00
+    },
+    {
+      "productName": "Item 10",
+      "quantity": 10,
+      "price": 1000000.00
+    }
+  ]
+}
+
+### ===== REACTIVE FINAL VALIDATION =====
+
+### 57. Final check - get all reactive orders to see total count
+GET http://localhost:8080/reactive/orders?page=0&size=100
+
+### 58. Final check - get reactive customer spending to see analytics
+GET http://localhost:8080/reactive/orders/customers/spending?page=0&size=50
+
+### 59. Final check - test reactive customer filtering
+GET http://localhost:8080/reactive/orders?customerName=Reactive
 
 ### ===== BULK DATA CREATION FOR TESTING =====
 

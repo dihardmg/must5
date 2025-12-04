@@ -2,6 +2,15 @@
 
 Aplikasi REST API untuk manajemen transaksi order dengan Quarkus Framework yang mendukung blocking dan reactive programming.
 
+## Overview
+
+![Architecture Overview](img/1.png)
+
+## API Documentation
+
+Swagger UI tersedia untuk dokumentasi API interaktif:
+- **Swagger UI**: http://localhost:8080/swagger-ui/
+
 ## Fitur
 
 - **Entity Management**: Order dan OrderItem dengan relasi one-to-many
@@ -20,6 +29,11 @@ Jalankan PostgreSQL 16:
 ```bash
 docker-compose up -d
 ```
+
+# Jalankan aplikasi
+```bash
+mvn clean quarkus:dev
+````
 
 Database akan tersedia di:
 - Host: localhost:5432
@@ -139,68 +153,6 @@ POST /orders
 }
 ```
 
-### Reactive REST API
-
-Semua endpoint blocking juga tersedia dalam versi reactive di:
-- Base URL: `/reactive/orders`
-- Tambahan: `/reactive/orders/stream` untuk streaming orders
-
-#### Reactive Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/reactive/orders` | Create new order (reactive version) |
-| GET | `/reactive/orders/{id}` | Get order by ID (reactive version) |
-| GET | `/reactive/orders` | Get all orders with pagination (reactive version) |
-| GET | `/reactive/orders?customerName={name}` | Get orders by customer name (reactive version) |
-| DELETE | `/reactive/orders/{id}` | Delete order by ID (reactive version) |
-| GET | `/reactive/orders/customers/spending` | Get total spending per customer (reactive version) |
-| GET | `/reactive/orders/customers/{customerName}` | Get orders by customer (reactive version) |
-| GET | `/reactive/orders/stream` | Stream orders (reactive streaming) |
-
-## Query Parameters
-
-### Pagination
-- `page`: Halaman (default: 1, 1-based indexing)
-- `size`: Jumlah data per halaman (default: 20, max: 100)
-- `sort`: Field untuk sorting (default: id)
-- `order`: Sort order: asc/desc (default: desc)
-- `customerName`: Filter berdasarkan nama customer (exact match)
-
-### Contoh:
-```bash
-GET /orders?page=1&size=10&sort=totalAmount&order=asc&customerName=John
-```
-
-### Available Sort Fields
-- `id`: Sort by order ID
-- `customerName`: Sort by customer name
-- `orderDate`: Sort by order date
-- `totalAmount`: Sort by total amount
-- `createdAt`: Sort by creation timestamp
-- `updatedAt`: Sort by update timestamp
-
-## Struktur Proyek
-
-```
-src/main/java/com/must5/
-├── entity/                 # JPA Entities
-│   ├── Order.java         # Order entity dengan Panache
-│   ├── OrderItem.java     # OrderItem entity dengan Panache
-│   └── CustomerSpending.java # DTO untuk customer spending
-├── dto/                    # Data Transfer Objects
-│   ├── OrderRequest.java
-│   ├── OrderResponse.java
-│   ├── OrderItemRequest.java
-│   └── OrderItemResponse.java
-├── resource/               # REST Resources (Blocking)
-│   └── OrderResource.java
-└── reactive/               # Reactive Components
-    ├── ReactiveOrder.java
-    ├── ReactiveOrderItem.java
-    ├── CustomerSpendingReactive.java
-    └── ReactiveOrderResource.java
-```
 
 ## Database Migration
 
@@ -216,32 +168,12 @@ src/main/resources/db/migration/
 
 ### Application Properties
 - Konfigurasi database di `application.properties`
-- Konfigurasi reactive di `application-reactive.properties`
 
-### Menjalankan Versi Reactive
 
-```bash
-./mvnw quarkus:dev -Dquarkus.profile=reactive
-```
-
-## Running the Application
-
-### Dev Mode
-```bash
-# Jalankan database
-docker-compose up -d
-
-# Jalankan aplikasi (blocking)
-./mvnw quarkus:dev
-
-# Jalankan aplikasi (reactive)
-./mvnw quarkus:dev -Dquarkus.profile=reactive
-```
 
 Aplikasi akan berjalan di:
 - Blocking API: http://localhost:8080/orders
 - Reactive API: http://localhost:8080/reactive/orders
-- Dev UI: http://localhost:8080/q/dev/
 
 
 ## Testing API
@@ -275,9 +207,6 @@ curl "http://localhost:8080/orders/customers/spending?page=1&size=5"
 # Get orders for specific customer
 curl "http://localhost:8080/orders/customers/John%20Doe?page=1&size=10"
 
-# Delete order
-curl -X DELETE http://localhost:8080/orders/1
-```
 
 ### Menggunakan HTTP
 

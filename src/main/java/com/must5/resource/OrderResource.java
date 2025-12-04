@@ -21,6 +21,15 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -31,12 +40,47 @@ import java.util.stream.Collectors;
 @Path("/orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "Order Management", description = "API untuk mengelola order (blocking operations)")
 @ApplicationScoped
 @PermitAll
 public class OrderResource {
 
     @POST
     @Transactional
+    @Operation(
+        summary = "Create new order",
+        description = "Create a new order with items. Returns the created order with ID."
+    )
+    @APIResponses(
+        value = {
+            @APIResponse(
+                responseCode = "201",
+                description = "Order created successfully",
+                content = @Content(
+                    mediaType = "application/json",
+                    examples = @ExampleObject(
+                        name = "OrderCreatedExample",
+                        value = "{\"code\":201,\"status\":\"CREATED\",\"message\":\"Order created successfully\",\"data\":{\"id\":1,\"customerName\":\"John Doe\",\"orderDate\":\"2025-12-04\",\"totalAmount\":150.00,\"items\":[{\"id\":1,\"productName\":\"Test Product\",\"quantity\":2,\"price\":75.00,\"subTotal\":150.00}]}}"
+                    )
+                )
+            ),
+            @APIResponse(
+                responseCode = "400",
+                description = "Bad request - validation failed"
+            )
+        }
+    )
+    @RequestBody(
+        description = "Order to create",
+        required = true,
+        content = @Content(
+            mediaType = "application/json",
+            examples = @ExampleObject(
+                name = "OrderExample",
+                value = "{\"customerName\":\"John Doe\",\"orderDate\":\"2025-12-04\",\"items\":[{\"productName\":\"Test Product\",\"quantity\":2,\"price\":75.00}]}"
+            )
+        )
+    )
     public Response createOrder(@Valid OrderRequest orderRequest, @Context UriInfo uriInfo) {
         try {
             // Manual validation for empty items
@@ -154,12 +198,39 @@ public class OrderResource {
     }
 
     @GET
+    @Operation(
+        summary = "Get all orders with pagination",
+        description = "Retrieve a paginated list of orders with optional filtering and sorting"
+    )
+    @APIResponses(
+        value = {
+            @APIResponse(
+                responseCode = "200",
+                description = "Orders retrieved successfully"
+            )
+        }
+    )
     public Response getOrders(
-            @QueryParam("page") @DefaultValue("1") int pageIndex,
-            @QueryParam("size") @DefaultValue("20") int pageSize,
-            @QueryParam("sort") @DefaultValue("id") String sortBy,
-            @QueryParam("order") @DefaultValue("desc") String sortOrder,
-            @QueryParam("customerName") String customerName) {
+            @Parameter(
+                description = "Page number (starting from 1)",
+                example = "1"
+            ) @QueryParam("page") @DefaultValue("1") int pageIndex,
+            @Parameter(
+                description = "Number of items per page",
+                example = "20"
+            ) @QueryParam("size") @DefaultValue("20") int pageSize,
+            @Parameter(
+                description = "Field to sort by",
+                example = "id"
+            ) @QueryParam("sort") @DefaultValue("id") String sortBy,
+            @Parameter(
+                description = "Sort order (asc/desc)",
+                example = "desc"
+            ) @QueryParam("order") @DefaultValue("desc") String sortOrder,
+            @Parameter(
+                description = "Filter by customer name",
+                example = "John Doe"
+            ) @QueryParam("customerName") String customerName) {
 
         try {
             // Convert 1-based page index to 0-based for internal use
